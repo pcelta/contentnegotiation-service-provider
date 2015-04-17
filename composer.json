@@ -1,0 +1,38 @@
+{
+  "name": "dafiti/contentnegotiation-service-provider",
+  "description": "A Silex Service Provider for Simple Content Negotiation",
+  "type": "library",
+  "license": "MIT",
+  "keywords": [
+    "silex",
+    "http",
+    "content negotiation",
+    "dafiti",
+    "rest"
+  ],
+  "authors": [
+    {
+      "name": "Pedro Ribeiro da Silva Neto",
+      "email": "pedro.neto@dafiti.com.br"
+    }
+  ],
+  "minimum-stability": "dev",
+  "require": {
+    "php": ">=5.5.0",
+    "silex/silex": "~1.1"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "@stable",
+    "fabpot/php-cs-fixer": "@stable"
+  },
+  "autoload": {
+    "psr-4": {
+      "Dafiti\\Silex\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Dafiti\\Silex\\": "tests/"
+    }
+  }
+}
