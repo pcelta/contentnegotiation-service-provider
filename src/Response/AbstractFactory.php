@@ -2,22 +2,20 @@
 
 namespace Dafiti\Silex\Response;
 
+use Dafiti\Silex\Exception\InvalidResponse;
 use Symfony\Component\HttpFoundation;
 
 abstract class AbstractFactory
 {
     /**
-     * @var array
-     */
-    public $errorMessages = [
-        HttpFoundation\Response::HTTP_NOT_ACCEPTABLE   => 'Accept Type Not Acceptable',
-        HttpFoundation\Response::HTTP_NOT_FOUND        => 'Resource Not Found',
-    ];
-
-    /**
      * @var string
      */
     protected $contentType;
+
+    /**
+     * @var bool
+     */
+    private $hasError;
 
     /**
      * @param string $contentType
@@ -25,6 +23,7 @@ abstract class AbstractFactory
     public function __construct($contentType)
     {
         $this->contentType = $contentType;
+        $this->hasError = false;
     }
 
     /**
@@ -47,4 +46,73 @@ abstract class AbstractFactory
 
         return true;
     }
+
+    /**
+     * @param \Dafiti\Silex\Response $controllerResponse
+     *
+     * @return HttpFoundation\Response
+     *
+     * @throws InvalidResponse
+     */
+    public function create(\Dafiti\Silex\Response $controllerResponse)
+    {
+        $controllerResponse = $this->decorateControllerResponse($controllerResponse);
+
+        $response = $this->transform($controllerResponse);
+
+        if (!$response instanceof HttpFoundation\Response) {
+            throw new InvalidResponse();
+        }
+
+        return $response;
+    }
+
+    /**
+     * @param \Dafiti\Silex\Response $controllerResponse
+     *
+     * @return \Dafiti\Silex\Response
+     */
+    private function decorateControllerResponse(\Dafiti\Silex\Response $controllerResponse)
+    {
+        if ($this->isError($controllerResponse->getStatusCode())) {
+            $this->hasError = true;
+
+            return $this->decorateErrorMessage($controllerResponse);
+        }
+
+        return $controllerResponse;
+    }
+
+    /**
+     * @param \Dafiti\Silex\Response $controllerResponse
+     *
+     * @return \Dafiti\Silex\Response
+     */
+    private function decorateErrorMessage(\Dafiti\Silex\Response $controllerResponse)
+    {
+        $message = HttpFoundation\Response::$statusTexts[$controllerResponse->getStatusCode()];
+
+        if (!is_null($controllerResponse->getErrorMessage())) {
+            $message = $controllerResponse->getErrorMessage();
+        }
+
+        $controllerResponse->setErrorMessage($message);
+
+        return $controllerResponse;
+    }
+
+    /**
+     * @return bool
+     */
+    protected function hasError()
+    {
+        return $this->hasError;
+    }
+
+    /**
+     * @param \Dafiti\Silex\Response $controllerResponse $response
+     *
+     * @return HttpFoundation\Response
+     */
+    abstract protected function transform(\Dafiti\Silex\Response $controllerResponse);
 }

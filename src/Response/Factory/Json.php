@@ -14,15 +14,17 @@ class Json extends AbstractFactory implements Factorable
      *
      * @return HttpFoundation\Response
      */
-    public function create(\Dafiti\Silex\Response $controllerResponse)
+    protected function transform(\Dafiti\Silex\Response $controllerResponse)
     {
         $response = new HttpFoundation\JsonResponse();
+        $response->headers->add(
+            ['Content-Type' => self::CONTENT_TYPE]
+        );
         $response->setStatusCode($controllerResponse->getStatusCode());
 
-        if ($this->isError($controllerResponse->getStatusCode())) {
-            $message = $this->errorMessages[$controllerResponse->getStatusCode()];
+        if ($this->hasError()) {
             $content = [
-                'message' => $message,
+                'message' => $controllerResponse->getErrorMessage(),
             ];
 
             $response->setData($content);
