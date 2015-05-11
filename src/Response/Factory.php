@@ -4,8 +4,9 @@ namespace Dafiti\Silex\Response;
 
 use Dafiti\Silex\Response\Factory\Factorable;
 use Dafiti\Silex\Response\Factory\Json;
+use Symfony\Component\HttpFoundation;
 
-class Factory extends AbstractFactory implements Factorable
+class Factory implements Factorable
 {
     /**
      * @var Factorable
@@ -49,7 +50,7 @@ class Factory extends AbstractFactory implements Factorable
     /**
      * @param \Dafiti\Silex\Response $controllerResponse
      *
-     * @return Response
+     * @return HttpFoundation\Response
      */
     public function create(\Dafiti\Silex\Response $controllerResponse)
     {

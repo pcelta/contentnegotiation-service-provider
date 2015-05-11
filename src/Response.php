@@ -15,13 +15,22 @@ class Response
     private $content;
 
     /**
+     * @var string
+     */
+    private $errorMessage;
+
+    /**
      * @param $statusCode
      * @param $content
      */
-    public function __construct($statusCode = 200, $content = null)
+    public function __construct($statusCode = 200, $content = null, $message = null)
     {
         $this->setStatusCode($statusCode);
         $this->setContent($content);
+
+        if (!is_null($message)) {
+            $this->setErrorMessage($message);
+        }
     }
 
     /**
@@ -59,5 +68,25 @@ class Response
     public function getContent()
     {
         return $this->content;
+    }
+
+    /**
+     * @return string
+     */
+    public function getErrorMessage()
+    {
+        return $this->errorMessage;
+    }
+
+    /**
+     * @param string $errorMessage
+     */
+    public function setErrorMessage($errorMessage)
+    {
+        if (!is_string($errorMessage)) {
+            throw new \InvalidArgumentException('Argument Is Not A String');
+        }
+
+        $this->errorMessage = $errorMessage;
     }
 }
